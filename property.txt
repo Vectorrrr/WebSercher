@@ -1,0 +1,7 @@
+path=./IdeaProjectsSecretssss
+answerPath=./IdeaProjectsSecretssss/forAnswer
+firstFile=/first.txt
+secondFile=/second.txt
+thirdFile=/third.txt
+
+FileAnswerName=Answer.answer
