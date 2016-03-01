@@ -1,7 +1,5 @@
 package view.writer;
 
-import model.UserAnswerFormat;
-
 import java.util.List;
 
 /**
