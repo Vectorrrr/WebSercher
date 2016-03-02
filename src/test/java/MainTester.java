@@ -33,12 +33,15 @@ public class MainTester {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        path = p.get("path").toString();
+        try {
+            path = new File(".").getCanonicalPath()+ p.get("testPath").toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         firstFile=p.get("firstFile").toString();
         secondFile=p.get("secondFile").toString();
         thirdFile=p.get("thirdFile").toString();
 
-        calcer = new TfCalcer();
 
         File file = new File(path);
 
@@ -65,6 +68,7 @@ public class MainTester {
                 System.out.println(ERROR_WRITE);
             }
         }
+        calcer = new TfCalcer(path);
 
     }
 

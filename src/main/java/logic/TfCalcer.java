@@ -21,11 +21,9 @@ public class TfCalcer {
     private final String ERROR_READ_PROPERTY = "I can't read property file";
     private final String ERROR_GET_CANONICAL_PATH="I can't get canonical path";
 
-    private ConsoleWriter consoleWriter;
+    private ConsoleWriter consoleWriter= new ConsoleWriter();;
     private String path;
     public TfCalcer() {
-        consoleWriter = new ConsoleWriter();
-
         Properties p = new Properties();
         try {
             p.load(new FileInputStream("property.txt"));
@@ -40,6 +38,10 @@ public class TfCalcer {
         }
 
 
+    }
+
+    public TfCalcer(String path){
+        this.path=path;
     }
 
     public List<UserAnswerFormat> searchWord(String word) {

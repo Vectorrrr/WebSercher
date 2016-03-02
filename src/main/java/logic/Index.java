@@ -1,13 +1,11 @@
 package logic;
 
 import model.*;
-import view.reader.FileReader;
 import view.writer.ConsoleWriter;
 import view.writer.IndexWriter;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.*;
@@ -23,11 +21,11 @@ public class Index  implements Runnable {
     private final String ERROR_READ_PROPERTY = "I can't read property";
     private final String ERROR_CORRECT = "The directory doesn't correct";
     private final String ERROR_FUTURE = "When  use future we have error!";
-
-    private  ExecutorService service = Executors.newFixedThreadPool(10);
+    private final String EMPTY_STRING = "";
+    private ExecutorService service = Executors.newFixedThreadPool(10);
     private String path;
     private ConsoleWriter consoleWriter;
-    private volatile boolean isShare=false;
+    private volatile boolean isShare = false;
 
     @Override
     public void run() {
@@ -37,14 +35,14 @@ public class Index  implements Runnable {
 
     public Index() {
         consoleWriter = new ConsoleWriter();
-        Properties p=new Properties();
+        Properties p = new Properties();
         try {
             p.load(new FileInputStream("property.txt"));
         } catch (IOException e) {
             e.printStackTrace();
         }
         try {
-            this.path=new File(".").getCanonicalPath()+p.getProperty("path");
+            this.path = new File(".").getCanonicalPath() + p.getProperty("path");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -57,15 +55,14 @@ public class Index  implements Runnable {
         if (!isCorrectDirectory(directory)) {
             throw new IllegalArgumentException(ERROR_CORRECT);
         }
-        if(isShare){
-           consoleWriter.write("I'm indexing now!");
-        }
-        else {
-            isShare=true;
+        if (isShare) {
+            consoleWriter.write("I'm indexing now!");
+        } else {
+            isShare = true;
             List<IndexFile> indexDirectory = createPreindex(directory);
             calcIdf(indexDirectory);
             saveIndex(indexDirectory, directory.getAbsolutePath());
-            isShare=false;
+            isShare = false;
         }
 
     }
@@ -83,8 +80,10 @@ public class Index  implements Runnable {
             answer = future.get();
         } catch (InterruptedException e) {
             consoleWriter.write(ERROR_FUTURE + "InterruptedException");
+            e.printStackTrace();
         } catch (ExecutionException e) {
             consoleWriter.write(ERROR_FUTURE + "ExecutionException");
+            e.printStackTrace();
         }
         return answer;
     }
@@ -133,14 +132,14 @@ public class Index  implements Runnable {
         }
     }
 
-    public  void stop() {
+    public void stop() {
         service.shutdown();
         try {
             service.awaitTermination(2, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-       service.shutdownNow();
+        service.shutdownNow();
     }
 
     private class FileShare implements Callable<List<IndexFile>> {
@@ -183,18 +182,21 @@ public class Index  implements Runnable {
             System.out.println("Read file....." + file.getAbsolutePath());
 
             FileInformation fileInformation = new FileInformation(file.getAbsolutePath());
+            String read;
+            try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
 
-            try (FileReader fileReader = new FileReader(file)) {
-                while (fileReader.canRead()) {
-
-                    String[] temp = fileReader.read().split("[,. /]");
+                read = fileReader.readLine();
+                while (!EMPTY_STRING.equals(read) && read!=null) {
+                    String[] temp = read.split("[,. /]");
                     for (String s : temp) {
                         if (s.length() > 0) {
                             System.out.println("Add word " + s);
                             fileInformation.addWord(s);
                         }
                     }
+                    read = fileReader.readLine();
                 }
+
             } catch (IOException e) {
                 consoleWriter.write(ERROR_CREATE);
             }
