@@ -31,14 +31,14 @@ public class WordCount {
     }
 
     @Override
-    public boolean equals(Object o){
-        if(o==null)
+    public boolean equals(Object o) {
+        if (o == null)
             return false;
 
-        if(!(o instanceof String)){
+        if (!(o instanceof String)) {
             return false;
         }
-        String s=(String)o;
+        String s = (String) o;
 
         return s.equals(word);
     }

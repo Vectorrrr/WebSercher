@@ -13,10 +13,8 @@ public class View {
     }
 
     public void showMainMenu() {
-        consoleWriter.write("If you want index some directory type 1");
-        consoleWriter.write("If you want index some directory type 2");
-        consoleWriter.write("If you want calc tf-idf type 3");
-        consoleWriter.write("If you want calc tf-idf from default directory type 4");
+        consoleWriter.write("If you want index default directory type 1");
+        consoleWriter.write("If you want calc tf-idf for default directory type 2");
         consoleWriter.write("If you want exit type 0");
 
     }

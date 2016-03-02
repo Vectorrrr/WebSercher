@@ -1,4 +1,4 @@
-path=./IdeaProjectsSecretssss
+path= /IdeaProjectsSecretssss
 answerPath=./IdeaProjectsSecretssss/forAnswer
 firstFile=/first.txt
 secondFile=/second.txt

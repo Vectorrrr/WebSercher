@@ -21,7 +21,6 @@ public class FileInformation {
         this.path = path;
     }
 
-
     public int totalCount() {
         int answer = 0;
         for (WordCount wordCount : wordsCount) {
@@ -29,7 +28,8 @@ public class FileInformation {
         }
         return answer;
     }
-    public Collection<WordCount> getWords(){
+
+    public Collection<WordCount> getWords() {
         return Collections.unmodifiableCollection(wordsCount);
     }
 

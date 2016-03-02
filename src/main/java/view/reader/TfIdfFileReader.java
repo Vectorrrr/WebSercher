@@ -15,7 +15,7 @@ import java.util.List;
 public  class  TfIdfFileReader implements Reader<List<IndexFile>> {
     private final String ERROR_READ = "I can't read";
 
-    private  ConsoleWriter consoleWriter;
+    private ConsoleWriter consoleWriter;
     private BufferedReader bufferedReader;
     private String nextLine;
 
@@ -26,7 +26,7 @@ public  class  TfIdfFileReader implements Reader<List<IndexFile>> {
     }
 
     @Override
-    public  List<IndexFile> read() {
+    public List<IndexFile> read() {
         List<IndexFile> answer = new ArrayList<>();
         IndexFile temp = null;
         while (canRead()) {

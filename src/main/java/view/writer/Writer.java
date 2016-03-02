@@ -8,5 +8,6 @@ import java.util.List;
  */
 public interface Writer<T>  extends AutoCloseable,Closeable {
     void write(T... s);
+
     void write(List<T> s);
 }

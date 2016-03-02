@@ -3,42 +3,47 @@ package view.writer;
 import model.IndexFile;
 import model.IndexWord;
 
-import java.io.Closeable;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 
 /**
  * Created by igladush on 01.03.16.
  */
-public class IndexWriter implements AutoCloseable,Closeable {
+public class IndexWriter implements Writer<IndexFile>, AutoCloseable,Closeable {
     private final String ERROR_WRITER = "I have exception when i write in your file";
+    private final String ERROR_GET_CANONICAL_PATH="I can't get canonical path";
     public final static String SEPARATOR = "========";
 
     private ConsoleWriter consoleWriter;
-
+    private String  path;
     public IndexWriter() {
         consoleWriter = new ConsoleWriter();
-    }
-
-    public void write(Collection<IndexFile> tfIdfFileList, String path) {
-
-        Properties p=new Properties();
+        Properties p = new Properties();
         try {
             p.load(new FileInputStream("property.txt"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        path=path+"/"+p.get("FileAnswerName").toString();
+        try {
+            path = new File(".").getCanonicalPath() + "/" + p.get("FileAnswerName").toString();
+        } catch (IOException e) {
+            consoleWriter.write(ERROR_GET_CANONICAL_PATH);
+        }
+    }
 
-        byte[] separator=System.getProperty("line.separator").getBytes();
+    private void writes(Collection<IndexFile> tfIdfFileList) {
+
+
+
+        byte[] separator = System.getProperty("line.separator").getBytes();
         try (FileOutputStream fileOutputStream = new FileOutputStream(path)) {
             for (IndexFile temp : tfIdfFileList) {
                 fileOutputStream.write(temp.toString().getBytes());
                 fileOutputStream.write(separator);
-                for (IndexWord word:temp.getWords()) {
+                for (IndexWord word : temp.getWords()) {
                     fileOutputStream.write(word.toString().getBytes());
                     fileOutputStream.write(separator);
                 }
@@ -51,7 +56,15 @@ public class IndexWriter implements AutoCloseable,Closeable {
 
 
     @Override
-    public void close() throws IOException {
+    public void close() throws IOException {    }
 
+    @Override
+    public void write(IndexFile... s) {
+        writes(Arrays.asList(s));
+    }
+
+    @Override
+    public void write(List<IndexFile> s) {
+       writes(s);
     }
 }

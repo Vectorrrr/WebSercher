@@ -35,5 +35,4 @@ public class UserAnswerFormat implements Comparable<UserAnswerFormat> {
         }
         return 1;
     }
-
 }

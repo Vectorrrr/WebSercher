@@ -4,8 +4,6 @@ package model;
  * Created by igladush on 01.03.16.
  */
 public class IndexWord {
-
-
     private String word;
     private double tf;
     private double idf;
@@ -26,8 +24,9 @@ public class IndexWord {
         this.word = word;
         this.tf = tf;
     }
+
     public IndexWord(String word, double tf, double idf) {
-        this(word,tf);
+        this(word, tf);
         this.idf = idf;
     }
 
@@ -41,13 +40,13 @@ public class IndexWord {
     }
 
     @Override
-    public boolean equals(Object o){
-        if(o==null)
+    public boolean equals(Object o) {
+        if (o == null)
             return false;
-        if(!(o instanceof IndexWord)){
+        if (!(o instanceof IndexWord)) {
             return false;
         }
-        IndexWord s=(IndexWord) o;
+        IndexWord s = (IndexWord) o;
         return s.getWord().equals(word);
     }
 }

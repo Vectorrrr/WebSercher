@@ -19,23 +19,31 @@ import java.util.Properties;
 public class TfCalcer {
     private final String ERROR_READ = "I can't read file";
     private final String ERROR_READ_PROPERTY = "I can't read property file";
-    private final String ERROR_FORMAT_INPUT_DATA = "You input incorrect string";
-    private final String ERROR_WORD_FORMAT = "You input incorrect word";
+    private final String ERROR_GET_CANONICAL_PATH="I can't get canonical path";
 
     private ConsoleWriter consoleWriter;
-
-
-    private Index index = new Index();
-
+    private String path;
     public TfCalcer() {
         consoleWriter = new ConsoleWriter();
 
+        Properties p = new Properties();
+        try {
+            p.load(new FileInputStream("property.txt"));
+        } catch (IOException e) {
+           consoleWriter.write(ERROR_READ_PROPERTY);
+        }
+
+        try {
+            this.path=new File(".").getCanonicalPath()+p.getProperty("path");
+        } catch (IOException e) {
+           consoleWriter.write(ERROR_GET_CANONICAL_PATH);
+        }
+
+
     }
 
-    public List<UserAnswerFormat> searchWord(String s) {
-        String path = createPath(s);
-        String word = createWord(s);
-        if (!checkPath(path) || !index.isIndexed(path)) {
+    public List<UserAnswerFormat> searchWord(String word) {
+        if (!checkPath(path) ) {
             return new ArrayList<>();
         }
 
@@ -65,22 +73,6 @@ public class TfCalcer {
         } catch (IOException e) {
             throw new IllegalArgumentException(ERROR_READ);
         }
-    }
-
-    private String createPath(String s) {
-        String[] splitInput = s.split(" ");
-        if (splitInput.length != 2) {
-            throw new IllegalArgumentException(ERROR_FORMAT_INPUT_DATA);
-        }
-        return splitInput[0];
-    }
-
-    private String createWord(String s) {
-        String[] split=s.split(" ");
-        if (split.length != 2 ) {
-            throw new IllegalArgumentException(ERROR_WORD_FORMAT);
-        }
-        return split[1];
     }
 
     private boolean checkPath(String path) {

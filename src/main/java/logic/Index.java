@@ -5,10 +5,7 @@ import view.reader.FileReader;
 import view.writer.ConsoleWriter;
 import view.writer.IndexWriter;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -21,38 +18,61 @@ import static java.lang.Thread.yield;
 /**
  * Created by igladush on 01.03.16.
  */
-public class Index {
+public class Index  implements Runnable {
     private final String ERROR_CREATE = "I can't create file information";
     private final String ERROR_READ_PROPERTY = "I can't read property";
     private final String ERROR_CORRECT = "The directory doesn't correct";
     private final String ERROR_FUTURE = "When  use future we have error!";
 
+    private  ExecutorService service = Executors.newFixedThreadPool(10);
+    private String path;
     private ConsoleWriter consoleWriter;
-    private ExecutorService service = Executors.newCachedThreadPool();
+    private volatile boolean isShare=false;
+
+    @Override
+    public void run() {
+        indexedDirectory();
+    }
+
 
     public Index() {
         consoleWriter = new ConsoleWriter();
+        Properties p=new Properties();
+        try {
+            p.load(new FileInputStream("property.txt"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            this.path=new File(".").getCanonicalPath()+p.getProperty("path");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public boolean isIndexed(String path) {
-        File directory = new File(path);
-        return !(!isCorrectDirectory(directory) || !containsIndexFile(directory));
-    }
 
-    public void indexedDirectory(String path) {
+    public void indexedDirectory() {
         File directory = new File(path);
 
         if (!isCorrectDirectory(directory)) {
             throw new IllegalArgumentException(ERROR_CORRECT);
         }
+        if(isShare){
+           consoleWriter.write("I'm indexing now!");
+        }
+        else {
+            isShare=true;
+            List<IndexFile> indexDirectory = createPreindex(directory);
+            calcIdf(indexDirectory);
+            saveIndex(indexDirectory, directory.getAbsolutePath());
+            isShare=false;
+        }
 
-        List<IndexFile> indexDirectory = createPreindex(directory);
-        calcIdf(indexDirectory);
-        saveIndex(indexDirectory, directory.getAbsolutePath());
     }
 
 
     private List<IndexFile> createPreindex(File indexDirectory) {
+
         Future<List<IndexFile>> future = service.submit(new FileShare(indexDirectory));
         while (!future.isDone()) {
             yield();
@@ -105,14 +125,23 @@ public class Index {
         }
     }
 
-    private void saveIndex(Collection<IndexFile> files, String path) {
+    private void saveIndex(List<IndexFile> files, String path) {
         try (IndexWriter indexWriter = new IndexWriter()) {
-            indexWriter.write(files, path);
+            indexWriter.write(files);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public  void stop() {
+        service.shutdown();
+        try {
+            service.awaitTermination(2, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+       service.shutdownNow();
+    }
 
     private class FileShare implements Callable<List<IndexFile>> {
         private File directory;
@@ -182,6 +211,7 @@ public class Index {
             }
             return file;
         }
+
 
     }
 
