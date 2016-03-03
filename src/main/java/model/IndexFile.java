@@ -22,9 +22,7 @@ public class IndexFile {
         this.path = path;
         words = new ArrayList<>();
     }
-
     public boolean containsWord(String word) {
-
         return words.contains(new IndexWord(word, 1.0));
     }
 

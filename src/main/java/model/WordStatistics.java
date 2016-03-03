@@ -3,7 +3,7 @@ package model;
 /**
  * Created by igladush on 01.03.16.
  */
-public class WordCount {
+public class WordStatistics {
 
     private String word;
     private long count;
@@ -20,11 +20,15 @@ public class WordCount {
         this.count++;
     }
 
-    public WordCount(String word) {
+    public WordStatistics(String word) {
         this.word = word;
         this.count = 1;
     }
+    public WordStatistics(String word,int count){
+        this(word);
+        this.count=count;
 
+    }
     @Override
     public String toString() {
         return word + " " + count + " ";

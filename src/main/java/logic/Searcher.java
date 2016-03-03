@@ -2,7 +2,7 @@ package logic;
 
 import model.IndexFile;
 import model.UserAnswerFormat;
-import view.reader.TfIdfFileReader;
+import view.reader.IndexReader;
 import view.writer.ConsoleWriter;
 
 import java.io.File;
@@ -16,14 +16,14 @@ import java.util.Properties;
 /**
  * Created by igladush on 01.03.16.
  */
-public class TfCalcer {
+public class Searcher {
     private final String ERROR_READ = "I can't read file";
     private final String ERROR_READ_PROPERTY = "I can't read property file";
     private final String ERROR_GET_CANONICAL_PATH="I can't get canonical path";
 
-    private ConsoleWriter consoleWriter= new ConsoleWriter();;
+    private ConsoleWriter consoleWriter= new ConsoleWriter();
     private String path;
-    public TfCalcer() {
+    public Searcher() {
         Properties p = new Properties();
         try {
             p.load(new FileInputStream("property.txt"));
@@ -40,12 +40,12 @@ public class TfCalcer {
 
     }
 
-    public TfCalcer(String path){
+    public Searcher(String path){
         this.path=path;
     }
 
     public List<UserAnswerFormat> searchWord(String word) {
-        if (!checkPath(path) ) {
+        if (!checkPath(path)) {
             return new ArrayList<>();
         }
 
@@ -69,7 +69,7 @@ public class TfCalcer {
         }
 
         String indexFile = p.get("FileAnswerName").toString();
-        try (TfIdfFileReader tfReader = new TfIdfFileReader(path + "/" + indexFile)) {
+        try (IndexReader tfReader = new IndexReader(path + "/" + indexFile)) {
             return tfReader.read();
 
         } catch (IOException e) {

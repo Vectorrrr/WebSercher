@@ -12,14 +12,14 @@ import java.util.List;
 /**
  * Created by igladush on 01.03.16.
  */
-public  class  TfIdfFileReader implements Reader<List<IndexFile>> {
+public  class IndexReader implements Reader<List<IndexFile>> {
     private final String ERROR_READ = "I can't read";
 
     private ConsoleWriter consoleWriter;
     private BufferedReader bufferedReader;
     private String nextLine;
 
-    public TfIdfFileReader(String path) throws IOException {
+    public IndexReader(String path) throws IOException {
         consoleWriter = new ConsoleWriter();
         bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
         nextLine = bufferedReader.readLine();

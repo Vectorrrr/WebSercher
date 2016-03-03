@@ -14,13 +14,13 @@ import java.util.Properties;
  */
 public class IndexWriter implements Writer<IndexFile>, AutoCloseable,Closeable {
     private final String ERROR_WRITER = "I have exception when i write in your file";
-    private final String ERROR_GET_CANONICAL_PATH="I can't get canonical path";
+    private final String ERROR_GET_CANONICAL_PATH = "I can't get canonical path";
     public final static String SEPARATOR = "========";
 
-    private ConsoleWriter consoleWriter;
-    private String  path;
+    private ConsoleWriter consoleWriter = new ConsoleWriter();
+    private String path;
+
     public IndexWriter() {
-        consoleWriter = new ConsoleWriter();
         Properties p = new Properties();
         try {
             p.load(new FileInputStream("property.txt"));
@@ -28,18 +28,26 @@ public class IndexWriter implements Writer<IndexFile>, AutoCloseable,Closeable {
             e.printStackTrace();
         }
         try {
-            path = new File(".").getCanonicalPath() + "/" + p.get("FileAnswerName").toString();
+            path = new File(".").getCanonicalPath() + p.getProperty("path") + p.get("FileAnswerName").toString();
         } catch (IOException e) {
             consoleWriter.write(ERROR_GET_CANONICAL_PATH);
         }
     }
 
+    public IndexWriter(String path) {
+        Properties p = new Properties();
+        try {
+            p.load(new FileInputStream("property.txt"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.path = path + p.get("FileAnswerName").toString();
+    }
+
     private void writes(Collection<IndexFile> tfIdfFileList) {
-
-
-
         byte[] separator = System.getProperty("line.separator").getBytes();
         try (FileOutputStream fileOutputStream = new FileOutputStream(path)) {
+
             for (IndexFile temp : tfIdfFileList) {
                 fileOutputStream.write(temp.toString().getBytes());
                 fileOutputStream.write(separator);
@@ -49,6 +57,7 @@ public class IndexWriter implements Writer<IndexFile>, AutoCloseable,Closeable {
                 }
             }
             fileOutputStream.write(SEPARATOR.getBytes());
+
         } catch (IOException e) {
             consoleWriter.write(ERROR_WRITER);
         }
@@ -56,7 +65,8 @@ public class IndexWriter implements Writer<IndexFile>, AutoCloseable,Closeable {
 
 
     @Override
-    public void close() throws IOException {    }
+    public void close() throws IOException {
+    }
 
     @Override
     public void write(IndexFile... s) {
@@ -65,6 +75,6 @@ public class IndexWriter implements Writer<IndexFile>, AutoCloseable,Closeable {
 
     @Override
     public void write(List<IndexFile> s) {
-       writes(s);
+        writes(s);
     }
 }

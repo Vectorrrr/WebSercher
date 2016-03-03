@@ -1,8 +1,9 @@
 path= /IdeaProjectsSecretssss
+nameTestDirectory=/TestFolder
 answerPath=./IdeaProjectsSecretssss/forAnswer
 firstFile=/first.txt
 secondFile=/second.txt
 thirdFile=/third.txt
 
 testPath=/TestFolder
-FileAnswerName=Answer.answer
+FileAnswerName=/Answer.answer
